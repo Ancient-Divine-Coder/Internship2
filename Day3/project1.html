@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Bar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 8px 15px;
+        }
+
+        nav a:hover {
+            color: #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        :root{
+            --bg-1: #f6f8fb;
+            --card: #ffffff;
+            --muted: #6b7280;
+            --accent: #4CAF50;
+            --accent-2: #3aa0ff;
+            --glass: rgba(255,255,255,0.6);
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg-1), #eef3f8 60%);
+            color: #1f2937;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+
+        .content {
+            padding: 40px;
+            text-align: center;
+            background-color: white;
+            margin-top: 20px;
+            margin: 20px;
+            border-radius: 5px;
+        }
+
+        /* Buttons */
+        button {
+            background: linear-gradient(90deg,var(--accent),var(--accent-2));
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(58,160,255,0.12);
+            transition: transform .14s ease, box-shadow .14s ease, opacity .14s ease;
+        }
+
+        button:hover{ transform: translateY(-3px); opacity: .98 }
+
+        section {
+            padding: 60px 20px;
+            margin: 20px;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .testimonial {
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #ffffff, #fbfbfb);
+        }
+
+        .pricing {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .plan {
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+            text-align: center;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .plan .price {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 12px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--muted);
+        }
+
+        .testimonial {
+            box-shadow: 0 8px 20px rgba(31,41,55,0.06);
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .testimonial:hover{ transform: translateY(-6px); box-shadow: 0 18px 30px rgba(31,41,55,0.08); }
+
+        .plan h3{ margin: 0; color: #0f172a }
+
+        .plan ul{ list-style: none; padding: 0; margin: 12px 0 18px 0; color: var(--muted) }
+
+        .pricing .plan:nth-child(2){
+            border: none;
+            background: linear-gradient(180deg, #fbfffb, #f0fff4);
+            box-shadow: 0 12px 30px rgba(76,175,80,0.08);
+        }
+
+        .plan .price{ color: var(--accent); }
+
+        .social a:hover{ background: rgba(255,255,255,0.12); transform: translateY(-3px); }
+
+        @media (max-width:600px){
+            nav ul{ gap: 12px; padding: 0 8px; }
+            .content{ padding: 24px }
+            section{ padding: 30px 12px }
+        }
+
+        .faq-list details {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 10px;
+            margin: 20px;
+            border-radius: 8px;
+            background: #222;
+            color: #fff;
+        }
+
+        .social {
+            display: inline-flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .social a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Welcome to my Website</h1>
+        <p>This is a simple navigation bar example.</p>
+    </div>
+
+    <section id="testimonials">
+        <h2 class="section-title">What our customers say</h2>
+        <div class="testimonials">
+            <div class="testimonial">
+                <p>"Great service and support — helped our business grow fast."</p>
+                <p><strong>— Priya K.</strong></p>
+            </div>
+            <div class="testimonial">
+                <p>"Easy to use, reliable, and excellent value for money."</p>
+                <p><strong>— Amit S.</strong></p>
+            </div>
+            <div class="testimonial">
+                <p>"Fantastic experience. The team was responsive and professional."</p>
+                <p><strong>— Neha R.</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <h2 class="section-title">Pricing</h2>
+        <div class="pricing">
+            <div class="plan">
+                <h3>Basic</h3>
+                <div class="price">$9<span>/mo</span></div>
+                <ul>
+                    <li>1 project</li>
+                    <li>Basic support</li>
+                </ul>
+                <button>Choose</button>
+            </div>
+            <div class="plan">
+                <h3>Pro</h3>
+                <div class="price">$29<span>/mo</span></div>
+                <ul>
+                    <li>Unlimited projects</li>
+                    <li>Priority support</li>
+                </ul>
+                <button>Choose</button>
+            </div>
+            <div class="plan">
+                <h3>Enterprise</h3>
+                <div class="price">Contact</div>
+                <ul>
+                    <li>Custom solutions</li>
+                    <li>Dedicated support</li>
+                </ul>
+                <button>Contact us</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <details>
+                <summary>How does the free trial work?</summary>
+                <p>You get full access for 14 days — cancel anytime.</p>
+            </details>
+            <details>
+                <summary>Can I change my plan later?</summary>
+                <p>Yes — upgrade or downgrade at any time from your account settings.</p>
+            </details>
+            <details>
+                <summary>Do you offer support?</summary>
+                <p>We offer email and chat support for all paid plans.</p>
+            </details>
+        </div>
+    </section>
+
+    <footer>
+        <div>Follow us</div>
+        <div class="social">
+            <a href="#" aria-label="Twitter">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.43.36a9 9 0 0 1-2.82 1.08A4.48 4.48 0 0 0 16.11 0c-2.5 0-4.5 2.24-4.5 5a5 5 0 0 0 .12 1.14A12.94 12.94 0 0 1 1.64 1.15 5 5 0 0 0 2.9 7.86 4.45 4.45 0 0 1 .9 7.3v.06A5 5 0 0 0 4.5 12a4.5 4.5 0 0 1-2 .08 5 5 0 0 0 4.67 3.4A9 9 0 0 1 0 18.58a12.7 12.7 0 0 0 6.92 2"/></svg>
+            </a>
+            <a href="#" aria-label="Facebook">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+        </div>
+    </footer>
+</body>
+</html>
