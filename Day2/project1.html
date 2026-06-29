@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College Admission Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff, #e8f7f2);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 520px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 20px 45px rgba(34, 57, 102, 0.12);
+      padding: 28px 32px;
+      box-sizing: border-box;
+    }
+
+    .form-container h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      color: #1f3d7a;
+    }
+
+    .form-container p {
+      margin: 0 0 24px;
+      color: #445067;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #24335a;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d4d8e7;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #202a40;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #7e9cff;
+      box-shadow: 0 0 0 4px rgba(126, 156, 255, 0.12);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #2b4478;
+      border-bottom: 1px solid #e3e9f3;
+      padding-bottom: 10px;
+    }
+
+    .notice {
+      font-size: 14px;
+      color: #5b6a85;
+      margin-bottom: 22px;
+    }
+
+    .submit-row {
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .submit-row button {
+      background: #3366ff;
+      color: #ffffff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.25s ease;
+    }
+
+    .submit-row button:hover {
+      background: #274fc5;
+    }
+
+    @media (max-width: 560px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="form-container">
+    <h1>College Admission Form</h1>
+    <p>Fill out the details below to begin the admission process. All fields marked with * are required.</p>
+
+    <div class="form-group">
+      <label for="fullName">Full Name *</label>
+      <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required />
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" placeholder="example@mail.com" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="birthDate">Date of Birth *</label>
+        <input type="date" id="birthDate" name="birthDate" required />
+      </div>
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender">
+          <option value="">Select gender</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+          <option value="preferNot">Prefer not to say</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="address">Address *</label>
+      <textarea id="address" name="address" rows="3" placeholder="Street, city, state, postal code" required></textarea>
+    </div>
+
+    <h2 class="section-title">Academic Information</h2>
+    <p class="notice">Provide your current academic status and the program you are applying for.</p>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="course">Desired Course *</label>
+        <select id="course" name="course" required>
+          <option value="">Select course</option>
+          <option value="computerScience">Computer Science</option>
+          <option value="businessManagement">Business Management</option>
+          <option value="arts">Arts & Humanities</option>
+          <option value="science">Science</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="education">Current Education Level *</label>
+        <select id="education" name="education" required>
+        
+          <option value="highSchool">High School</option>
+          <option value="diploma">Diploma</option>
+          <option value="undergraduate">Undergraduate</option>
+          <option value="graduate">Graduate</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="marks">Percentage / GPA *</label>
+        <input type="text" id="marks" name="marks" placeholder="e.g. 86% or 3.8" required />
+      </div>
+      <div class="form-group">
+        <label for="yearPassed">Year of Passing *</label>
+        <input type="number" id="yearPassed" name="yearPassed" min="2000" max="2030" placeholder="2024" required />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="comments">Additional Notes</label>
+      <textarea id="comments" name="comments" rows="4" placeholder="Write any extra information or questions here."></textarea>
+    </div>
+
+    <div class="submit-row">
+      <button type="submit">Submit Application</button>
+    </div>
+  </section>
+</body>
+</html>
