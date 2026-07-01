@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMBERBLADE — Hand-Forged Swords</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    /* ============ THEME TOKENS ============ */
+    :root {
+        --display-font: 'Cinzel', serif;
+        --body-font: 'Inter', Arial, sans-serif;
+        --mono-font: 'JetBrains Mono', monospace;
+    }
+
+    /* Midnight Forge (dark, default) */
+    html[data-theme="dark"] {
+        --bg: #0c0e11;
+        --bg-2: #12151a;
+        --card: #171a20;
+        --card-border: #262b33;
+        --text: #e9e6de;
+        --muted: #8b93a1;
+        --ember: #d4622b;
+        --ember-bright: #ef7c3c;
+        --crimson: #7a1f1f;
+        --steel: #7d8a9c;
+        --steel-bright: #aeb9c7;
+        --shadow: rgba(0,0,0,0.55);
+        --nav-bg: rgba(12,14,17,0.85);
+    }
+
+    /* Polished Steel (light) */
+    html[data-theme="light"] {
+        --bg: #dfe3e6;
+        --bg-2: #eceef0;
+        --card: #f7f8f9;
+        --card-border: #cfd5da;
+        --text: #1b1f24;
+        --muted: #545e6b;
+        --ember: #b8461a;
+        --ember-bright: #d4622b;
+        --crimson: #7a1f1f;
+        --steel: #3c4a5e;
+        --steel-bright: #253243;
+        --shadow: rgba(30,35,42,0.18);
+        --nav-bg: rgba(223,227,230,0.85);
+    }
+
+    body {
+        font-family: var(--body-font);
+        background: radial-gradient(ellipse 120% 80% at 50% -10%, var(--bg-2), var(--bg) 60%);
+        color: var(--text);
+        transition: background .35s ease, color .35s ease;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 { font-family: var(--display-font); letter-spacing: 0.02em; }
+
+    a { color: inherit; }
+
+    /* ============ NAV ============ */
+    nav {
+        background: var(--nav-bg);
+        backdrop-filter: blur(10px);
+        padding: 16px 28px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--card-border);
+        transition: background .35s ease, border-color .35s ease;
+    }
+
+    .brand {
+        font-family: var(--display-font);
+        font-weight: 700;
+        font-size: 20px;
+        letter-spacing: 0.12em;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .brand svg { width: 22px; height: 22px; color: var(--ember); }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        gap: 26px;
+        flex-wrap: wrap;
+    }
+
+    nav a.nav-link {
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        transition: color 0.25s ease;
+        padding: 6px 2px;
+        position: relative;
+    }
+
+    nav a.nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0; bottom: -2px;
+        width: 0%; height: 1px;
+        background: var(--ember);
+        transition: width .25s ease;
+    }
+
+    nav a.nav-link:hover { color: var(--text); }
+    nav a.nav-link:hover::after { width: 100%; }
+
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+
+    /* Dark mode switch */
+    .theme-toggle {
+        width: 52px;
+        height: 28px;
+        border-radius: 20px;
+        border: 1px solid var(--card-border);
+        background: var(--card);
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 3px;
+        transition: background .3s ease, border-color .3s ease;
+        flex-shrink: 0;
+    }
+
+    .theme-toggle .knob {
+        width: 20px; height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--ember), var(--ember-bright));
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        transform: translateX(0);
+        transition: transform .3s cubic-bezier(.4,1.4,.5,1);
+        box-shadow: 0 2px 6px var(--shadow);
+    }
+
+    html[data-theme="light"] .theme-toggle .knob { transform: translateX(24px); }
+
+    .theme-toggle .knob svg { width: 12px; height: 12px; }
+
+    /* ============ HERO ============ */
+    .hero {
+        padding: 100px 24px 90px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: "";
+        position: absolute;
+        top: -20%; left: 50%;
+        width: 900px; height: 500px;
+        transform: translateX(-50%);
+        background: radial-gradient(circle, color-mix(in srgb, var(--ember) 18%, transparent), transparent 70%);
+        pointer-events: none;
+    }
+
+    .eyebrow {
+        font-family: var(--mono-font);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin-bottom: 18px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero h1 {
+        font-size: clamp(38px, 6vw, 68px);
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero h1 em {
+        font-style: normal;
+        color: var(--ember);
+    }
+
+    .hero p.sub {
+        max-width: 560px;
+        margin: 0 auto 34px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-actions {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Crossguard divider — signature element */
+    .divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin: 0 auto 40px;
+        width: fit-content;
+    }
+    .divider .line { width: 60px; height: 1px; background: var(--card-border); }
+    .divider svg { width: 18px; height: 18px; color: var(--ember); }
+
+    /* ============ BUTTONS ============ */
+    button, .btn {
+        font-family: var(--body-font);
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.03em;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        padding: 13px 26px;
+        position: relative;
+        overflow: hidden;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(100deg, var(--ember) 0%, var(--ember-bright) 100%);
+        color: #fff;
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--ember) 35%, transparent);
+    }
+
+    .btn-ghost {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--card-border);
+    }
+
+    button::after {
+        content: "";
+        position: absolute;
+        top: 0; left: -60%;
+        width: 40%; height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+        transform: skewX(-20deg);
+        transition: left .5s ease;
+    }
+    button:hover::after { left: 130%; }
+    button:hover { transform: translateY(-2px); }
+
+    /* ============ SECTIONS ============ */
+    section {
+        padding: 80px 24px;
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: clamp(26px, 4vw, 36px);
+        margin-bottom: 8px;
+    }
+
+    .section-sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 15px;
+        max-width: 480px;
+        margin: 0 auto 20px;
+    }
+
+    /* ============ COLLECTIONS ============ */
+    .collections {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 18px;
+    }
+
+    .collection-card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 6px;
+        padding: 26px 18px;
+        text-align: center;
+        transition: transform .2s ease, border-color .2s ease;
+    }
+
+    .collection-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--ember);
+    }
+
+    .collection-card svg { width: 30px; height: 30px; color: var(--ember); margin-bottom: 12px; }
+    .collection-card h3 { font-size: 15px; margin-bottom: 4px; }
+    .collection-card p { font-size: 12px; color: var(--muted); font-family: var(--mono-font); }
+    .collection-image { display: flex; justify-content: center; margin-top: 14px; }
+    .collection-image img { max-width: 100%; height: auto; display: block; border-radius: 6px; }
+
+    /* ============ PRODUCT GRID ============ */
+    .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 26px;
+    }
+
+    .product-card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px var(--shadow);
+        border-color: var(--ember);
+    }
+
+    /* Product image placeholder — swap the inner <svg> for an <img> tag once you have real photos */
+    .product-image {
+        position: relative;
+        height: 190px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .product-card:nth-child(1) .product-image { background: linear-gradient(135deg, #2a2f38, #14171b); }
+    .product-card:nth-child(2) .product-image { background: linear-gradient(135deg, #3a2420, #1a1210); }
+    .product-card:nth-child(3) .product-image { background: linear-gradient(135deg, #24303a, #10161c); }
+    .product-card:nth-child(4) .product-image { background: linear-gradient(135deg, #322a1c, #16120a); }
+    .product-card:nth-child(5) .product-image { background: linear-gradient(135deg, #2c2432, #130f16); }
+    .product-card:nth-child(6) .product-image { background: linear-gradient(135deg, #1f2e28, #0e1512); }
+
+    .product-image svg,
+    .product-image img {
+        width: 72%;
+        max-height: 100%;
+        object-fit: contain;
+        color: rgba(255,255,255,0.85);
+        filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
+        transition: transform .3s ease;
+    }
+    .product-card:hover .product-image svg,
+    .product-card:hover .product-image img { transform: scale(1.06) rotate(-2deg); }
+
+    .badge {
+        position: absolute;
+        top: 12px; left: 12px;
+        font-family: var(--mono-font);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 4px 9px;
+        border-radius: 3px;
+        background: rgba(0,0,0,0.5);
+        color: var(--ember-bright);
+        border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .product-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .product-body h3 { font-size: 17px; margin-bottom: 6px; }
+    .product-specs {
+        font-family: var(--mono-font);
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 14px;
+        line-height: 1.6;
+    }
+
+    .product-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        padding-top: 14px;
+        border-top: 1px solid var(--card-border);
+    }
+
+    .price { font-family: var(--mono-font); font-size: 18px; font-weight: 500; color: var(--ember); }
+    .product-footer button { padding: 9px 16px; font-size: 12px; }
+
+    /* ============ CRAFTSMANSHIP ============ */
+    .craft {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+    }
+    .craft .visual {
+        aspect-ratio: 1;
+        border-radius: 8px;
+        background: linear-gradient(160deg, var(--card), var(--bg-2));
+        border: 1px solid var(--card-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .craft .visual .container {
+        width: min(100%, 420px);
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .craft .visual img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        object-fit: cover;
+        display: block;
+    }
+    .craft .visual svg { width: 46%; color: var(--ember); opacity: 0.9; }
+    .craft h2 { font-size: 30px; margin-bottom: 16px; }
+    .craft p { color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+    .craft ul { list-style: none; color: var(--text); font-size: 14px; }
+    .craft li { padding: 6px 0; display: flex; gap: 10px; align-items: baseline; }
+    .craft li::before { content: "—"; color: var(--ember); }
+
+    @media (max-width: 720px) {
+        .craft { grid-template-columns: 1fr; }
+    }
+
+    /* ============ TESTIMONIALS ============ */
+    .testimonials {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .testimonial {
+        padding: 26px 22px;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        background: var(--card);
+        transition: transform .2s ease, border-color .2s ease;
+    }
+    .testimonial:hover { transform: translateY(-5px); border-color: var(--ember); }
+    .testimonial .stars { color: var(--ember); font-size: 13px; margin-bottom: 10px; letter-spacing: 2px; }
+    .testimonial p.quote { font-size: 14px; line-height: 1.6; margin-bottom: 14px; color: var(--text); }
+    .testimonial .who { font-family: var(--mono-font); font-size: 12px; color: var(--muted); }
+
+    /* ============ FAQ ============ */
+    .faq-list details {
+        margin: 10px 0;
+        padding: 16px 18px;
+        border-radius: 6px;
+        border: 1px solid var(--card-border);
+        background: var(--card);
+        transition: border-color .2s ease;
+    }
+    .faq-list details:hover { border-color: var(--ember); }
+    .faq-list summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 15px;
+        list-style: none;
+    }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after { content: "+"; float: right; color: var(--ember); font-weight: 700; }
+    .faq-list details[open] summary::after { content: "–"; }
+    .faq-list p { margin-top: 10px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ============ CONTACT ============ */
+    .contact-box {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 40px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+    .contact-box h2 { font-size: 24px; margin-bottom: 10px; }
+    .contact-box p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin-bottom: 6px;
+    }
+    .field input, .field textarea {
+        width: 100%;
+        padding: 11px 12px;
+        border-radius: 4px;
+        border: 1px solid var(--card-border);
+        background: var(--bg-2);
+        color: var(--text);
+        font-family: var(--body-font);
+        font-size: 14px;
+        transition: border-color .2s ease;
+    }
+    .field input:focus, .field textarea:focus {
+        outline: none;
+        border-color: var(--ember);
+    }
+    .field.invalid input { border-color: var(--crimson); }
+    .field .error {
+        display: none;
+        color: var(--ember-bright);
+        font-size: 12px;
+        margin-top: 5px;
+        font-family: var(--mono-font);
+    }
+    .field.invalid .error { display: block; }
+
+    #contactStatus {
+        margin-top: 10px;
+        font-size: 13px;
+        font-family: var(--mono-font);
+        color: var(--ember-bright);
+        display: none;
+    }
+    #contactStatus.show { display: block; }
+
+    @media (max-width: 720px) {
+        .contact-box { grid-template-columns: 1fr; padding: 26px; }
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 40px 20px;
+        background: var(--bg-2);
+        color: var(--muted);
+        border-top: 1px solid var(--card-border);
+    }
+    footer .brand { justify-content: center; color: var(--text); margin-bottom: 6px; }
+    footer .foot-note { font-family: var(--mono-font); font-size: 12px; margin-top: 4px; }
+
+    .social {
+        display: inline-flex;
+        gap: 12px;
+        margin-top: 16px;
+    }
+    .social a {
+        width: 36px; height: 36px;
+        color: var(--text);
+        text-decoration: none;
+        border-radius: 50%;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform .2s ease, border-color .2s ease;
+    }
+    .social a:hover { transform: translateY(-3px); border-color: var(--ember); }
+
+    @media (max-width: 600px) {
+        nav { padding: 14px 16px; flex-wrap: wrap; gap: 12px; }
+        nav ul { gap: 14px; width: 100%; order: 3; justify-content: flex-start; overflow-x: auto; }
+        section { padding: 56px 16px; }
+    }
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 L13 15 L12 22 L11 15 Z"/><path d="M7 14 L17 14"/><path d="M11.2 15 L12.8 15"/></svg>
+        EMBERBLADE
+    </div>
+    <ul>
+        <li><a class="nav-link" href="#home">Home</a></li>
+        <li><a class="nav-link" href="#collections">Collections</a></li>
+        <li><a class="nav-link" href="#shop">Blades</a></li>
+        <li><a class="nav-link" href="#craft">Craft</a></li>
+        <li><a class="nav-link" href="#reviews">Reviews</a></li>
+        <li><a class="nav-link" href="#faq">FAQ</a></li>
+        <li><a class="nav-link" href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" type="button">
+            <span class="knob">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L13 15 L12 22 L11 15 Z"/></svg>
+            </span>
+        </button>
+    </div>
+</nav>
+
+<section id="home" class="hero">
+    <div class="eyebrow">Hand-forged · Battle-ready · Since the coals never cooled</div>
+    <h1>Steel that remembers<br><em>the fire</em> it was born in.</h1>
+    <p class="sub">Every blade at Emberblade is hand-hammered, quenched, and edged by smiths who still measure heat by the color of the metal, not a dial.</p>
+    <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('shop').scrollIntoView()">Browse the Forge</button>
+        <button class="btn-ghost" onclick="document.getElementById('craft').scrollIntoView()">Our Process</button>
+    </div>
+</section>
+
+<section id="collections">
+    <div class="divider"><span class="line"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4 L20 20 M20 4 L4 20"/></svg><span class="line"></span></div>
+    <h2 class="section-title">Collections</h2>
+    <p class="section-sub">Four lines, each built for a different hand and a different fight.</p>
+    <div class="collections">
+        <div class="collection-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20 L18 6 M14 4 L20 10 M6 18 L4 20 M4 20 L2 18"/></svg>
+            <h3>Katanas</h3>
+            <p>CURVED · SINGLE-EDGE</p>
+             <div class="collection-image">
+                <img src="4.0.jpg" alt="Longsword">
+            </div>
+        </div>
+        <div class="collection-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 L13 16 L12 22 L11 16 Z"/><path d="M7 15 L17 15"/></svg>
+            <h3>Longswords</h3>
+            <p>TWO-HANDED · CRUCIFORM</p>
+            <div class="collection-image">
+                <img src="4.1.jpg" alt="Longsword">
+            </div>
+        </div>
+        <div class="collection-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3 L12.6 14 L12 19 L11.4 14 Z"/><path d="M9.5 12.5 L14.5 12.5"/></svg>
+            <h3>Daggers</h3>
+            <p>CONCEALABLE · QUICK-DRAW</p>
+             <div class="collection-image">
+                <img src="4.3.jpg" alt="Longsword">
+            </div>
+        </div>
+        <div class="collection-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1 L13.4 15 L12 23 L10.6 15 Z"/><path d="M6 14 L18 14"/></svg>
+            <h3>Greatswords</h3>
+            <p>HEAVY · CEREMONIAL</p>
+             <div class="collection-image">
+                <img src="4.4.jpg" alt="Longsword">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="shop">
+    <div class="divider"><span class="line"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4 L20 20 M20 4 L4 20"/></svg><span class="line"></span></div>
+    <h2 class="section-title">From the Forge</h2>
+    <p class="section-sub">Six blades currently in stock. Swap the placeholder icons below for your own product photography — just replace the inner &lt;svg&gt; with an &lt;img&gt; tag.</p>
+
+    <div class="products">
+        <div class="product-card">
+            <div class="product-image">
+                <span class="badge">Battle Ready</span>
+                <img src="4.0.jpg" alt="Ashfall Katana">
+            </div>
+            <div class="product-body">
+                <h3>Ashfall Katana</h3>
+                <div class="product-specs">1095 HIGH-CARBON · 28" BLADE<br>CLAY-TEMPERED EDGE</div>
+                <div class="product-footer">
+                    <span class="price">$289</span>
+                    <button class="btn-primary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">
+                <span class="badge">Limited Forge</span>
+                <img src="4.6.jpg" alt="Wraithguard Longsword">
+            </div>
+            <div class="product-body">
+                <h3>Wraithguard Longsword</h3>
+                <div class="product-specs">DAMASCUS STEEL · 34" BLADE<br>HAND-WRAPPED LEATHER GRIP</div>
+                <div class="product-footer">
+                    <span class="price">$349</span>
+                    <button class="btn-primary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">
+                <img src="4.3.jpg" alt="Crimson Fang Dagger">
+            </div>
+            <div class="product-body">
+                <h3>Crimson Fang Dagger</h3>
+                <div class="product-specs">OIL-QUENCHED · 8" BLADE<br>BOOT SHEATH INCLUDED</div>
+                <div class="product-footer">
+                    <span class="price">$89</span>
+                    <button class="btn-primary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">
+                <span class="badge">Collector's Edition</span>
+                <img src="4.2.jpg" alt="Stormbreaker Greatsword">
+            </div>
+            <div class="product-body">
+                <h3>Stormbreaker Greatsword</h3>
+                <div class="product-specs">SPRING STEEL · 48" BLADE<br>TWO-HANDED · CEREMONIAL FINISH</div>
+                <div class="product-footer">
+                    <span class="price">$459</span>
+                    <button class="btn-primary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">
+                <img src="4.7.jpg" alt="Nightfall Rapier">
+            </div>
+            <div class="product-body">
+                <h3>Nightfall Rapier</h3>
+                <div class="product-specs">FLEXIBLE FENCING STEEL · 33" BLADE<br>BASKET-STYLE HILT</div>
+                <div class="product-footer">
+                    <span class="price">$199</span>
+                    <button class="btn-primary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">
+                <span class="badge">Battle Ready</span>
+                <img src="4.1.jpg" alt="Ironclad Broadsword">
+            </div>
+            <div class="product-body">
+                <h3>Ironclad Broadsword</h3>
+                <div class="product-specs">HISTORICAL REPLICA · 31" BLADE<br>FULL TANG · FORGED GUARD</div>
+                <div class="product-footer">
+                    <span class="price">$329</span>
+                    <button class="btn-primary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="craft" class="craft">
+    <div class="visual">
+        <div class="container"><img src="4.8.jpg" alt="Ironclad Broadsword"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12 h4 M17 12 h4 M12 3 v4 M12 17 v4"/><circle cx="12" cy="12" r="6"/></svg>
+    </div>
+    
+    <div>
+        
+        <h2>Every blade earns its edge</h2>
+        <p>We start with raw billet, not pre-ground stock. Each piece is hand-hammered at forging temperature, folded where the steel calls for it, then quenched and tempered by eye.</p>
+        <ul>
+            <li>Hand-forged from raw billet, never cast</li>
+            <li>Clay-tempered or oil-quenched depending on blade class</li>
+            <li>Full-tang construction on every model</li>
+            <li>Each blade signed and dated by the smith</li>
+        </ul>
+    </div>
+</section>
+
+<section id="reviews">
+    <div class="divider"><span class="line"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4 L20 20 M20 4 L4 20"/></svg><span class="line"></span></div>
+    <h2 class="section-title">Carried by</h2>
+    <p class="section-sub">Reviews from collectors, practitioners, and a few very happy re-enactors.</p>
+    <div class="testimonials">
+        <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="quote">The balance on the Wraithguard is unreal — it doesn't feel like 34 inches of steel until you see it swing.</p>
+            <p class="who">— Priya K., Longsword</p>
+        </div>
+        <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="quote">Ordered the Ashfall for iaido practice. The edge geometry is exactly what a dojo blade should be.</p>
+            <p class="who">— Amit S., Katana</p>
+        </div>
+        <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="quote">Bought the Stormbreaker as a display piece and ended up training with it. Built like it's meant to be used, not just mounted.</p>
+            <p class="who">— Neha R., Greatsword</p>
+        </div>
+    </div>
+</section>
+
+<section id="faq">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="faq-list">
+        <details>
+            <summary>Are these blades sharp out of the box?</summary>
+            <p>Battle Ready models ship with a working edge. Display and Collector's Edition pieces ship blunt by default — tell us at checkout if you'd like a live edge instead.</p>
+        </details>
+        <details>
+            <summary>What steel do you use?</summary>
+            <p>Mostly 1095 high-carbon and hand-folded Damascus, depending on the model. Full specs are listed on every product card.</p>
+        </details>
+        <details>
+            <summary>Do you ship internationally?</summary>
+            <p>Yes, though blade imports are regulated differently in every country — check your local laws before ordering, we can't do that part for you.</p>
+        </details>
+        <details>
+            <summary>What's the return policy?</summary>
+            <p>30 days on unsharpened and unused blades. Custom-etched or personalized orders are final sale.</p>
+        </details>
+    </div>
+</section>
+
+<section id="contact">
+    <h2 class="section-title">Get in Touch</h2>
+    <div class="contact-box">
+        <div>
+            <h2>Commission a blade</h2>
+            <p>Custom lengths, engravings, and steel choices are available on request. Tell us what you're building for.</p>
+            <p style="margin-top: 22px; font-family: var(--mono-font); font-size: 13px; color: var(--text);">forge@emberblade.example<br>Mon–Sat, 10am–6pm</p>
+        </div>
+        <form id="contactForm" novalidate>
+            <div class="field" id="nameField">
+                <label for="nameInput">Name</label>
+                <input type="text" id="nameInput" placeholder="Your name">
+                <div class="error">Please enter your name.</div>
+            </div>
+            <div class="field" id="emailField">
+                <label for="emailInput">Email</label>
+                <input type="email" id="emailInput" placeholder="you@example.com">
+                <div class="error">Please enter a valid email address.</div>
+            </div>
+            <div class="field" id="messageField">
+                <label for="messageInput">What are you building for?</label>
+                <textarea id="messageInput" rows="3" placeholder="Tell us about the piece you have in mind"></textarea>
+                <div class="error">Tell us a little about what you need.</div>
+            </div>
+            <button type="submit" class="btn-primary">Send Message</button>
+            <div id="contactStatus"></div>
+        </form>
+    </div>
+</section>
+
+<footer>
+    <div class="brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color: var(--ember); width:20px; height:20px;"><path d="M12 2 L13 15 L12 22 L11 15 Z"/><path d="M7 14 L17 14"/></svg>
+        EMBERBLADE
+    </div>
+    <div class="foot-note">Hand-forged since the coals never cooled.</div>
+    <div class="social">
+        <a href="#" aria-label="Twitter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.43.36a9 9 0 0 1-2.82 1.08A4.48 4.48 0 0 0 16.11 0c-2.5 0-4.5 2.24-4.5 5a5 5 0 0 0 .12 1.14A12.94 12.94 0 0 1 1.64 1.15 5 5 0 0 0 2.9 7.86 4.45 4.45 0 0 1 .9 7.3v.06A5 5 0 0 0 4.5 12a4.5 4.5 0 0 1-2 .08 5 5 0 0 0 4.67 3.4A9 9 0 0 1 0 18.58a12.7 12.7 0 0 0 6.92 2"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9 L15 12 L10 15 Z" fill="currentColor"/></svg></a>
+    </div>
+</footer>
+
+<script>
+    // ---- Dark mode toggle (persists via localStorage) ----
+    const root = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const knobIcon = toggle.querySelector('svg');
+
+    const flamePath = 'M12 2 L13 15 L12 22 L11 15 Z';
+    const sunPath = 'M12 4 V2 M12 22 V20 M4 12 H2 M22 12 H20 M6 6 L4.5 4.5 M18 6 L19.5 4.5 M6 18 L4.5 19.5 M18 18 L19.5 19.5';
+
+    function paintToggleIcon(theme) {
+        if (theme === 'light') {
+            knobIcon.innerHTML = '<circle cx="12" cy="12" r="4" fill="currentColor"/><path d="' + sunPath + '" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+        } else {
+            knobIcon.innerHTML = '<path d="' + flamePath + '" fill="currentColor"/>';
+        }
+    }
+
+    function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('emberblade-theme', theme);
+        paintToggleIcon(theme);
+    }
+
+    const savedTheme = localStorage.getItem('emberblade-theme') || 'dark';
+    applyTheme(savedTheme);
+
+    toggle.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme');
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // ---- Contact form validation (feature: validated fields + input-aware feedback) ----
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('contactStatus');
+
+    function setValid(fieldId, isValid) {
+        document.getElementById(fieldId).classList.toggle('invalid', !isValid);
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const name = document.getElementById('nameInput').value.trim();
+        const email = document.getElementById('emailInput').value.trim();
+        const message = document.getElementById('messageInput').value.trim();
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        setValid('nameField', name.length > 0);
+        setValid('emailField', emailOk);
+        setValid('messageField', message.length > 0);
+
+        if (name && emailOk && message) {
+            status.textContent = 'Thanks, ' + name + ' — we\'ll write back to ' + email + ' shortly.';
+            status.classList.add('show');
+            form.reset();
+        } else {
+            status.classList.remove('show');
+        }
+    });
+</script>
+</body>
+</html>
