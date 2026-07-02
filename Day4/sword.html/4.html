@@ -407,6 +407,62 @@
     .price { font-family: var(--mono-font); font-size: 18px; font-weight: 500; color: var(--ember); }
     .product-footer button { padding: 9px 16px; font-size: 12px; }
 
+    .cart-panel {
+        margin-top: 28px;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        padding: 22px;
+    }
+
+    .cart-panel h3 {
+        font-size: 18px;
+        margin-bottom: 14px;
+    }
+
+    .cart-items {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--card-border);
+    }
+
+    .cart-item strong { color: var(--ember); }
+
+    .cart-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        font-family: var(--mono-font);
+        color: var(--muted);
+    }
+
+    .cart-panel.hide {
+        display: none;
+    }
+
+    #cartToggle {
+        font-size: 13px;
+        padding: 9px 16px;
+        border-radius: 999px;
+    }
+
+    #cartCount {
+        margin-left: 6px;
+        font-weight: 700;
+        color: var(--ember);
+    }
+
     /* ============ CRAFTSMANSHIP ============ */
     .craft {
         display: grid;
@@ -602,6 +658,7 @@
         <li><a class="nav-link" href="#contact">Contact</a></li>
     </ul>
     <div class="nav-right">
+        <button class="btn-ghost" id="cartToggle" type="button" aria-label="Toggle cart">Cart <span id="cartCount">0</span></button>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" type="button">
             <span class="knob">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L13 15 L12 22 L11 15 Z"/></svg>
@@ -754,6 +811,17 @@
             </div>
         </div>
     </div>
+
+    <div class="cart-panel hide" id="cartPanel">
+        <h3>Cart</h3>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-item">Your cart is empty.</div>
+        </div>
+        <div class="cart-summary">
+            <span>Total</span>
+            <strong id="cartTotal">$0</strong>
+        </div>
+    </div>
 </section>
 
 <section id="craft" class="craft">
@@ -893,6 +961,61 @@
         const current = root.getAttribute('data-theme');
         applyTheme(current === 'dark' ? 'light' : 'dark');
     });
+
+    const cartToggleButton = document.getElementById('cartToggle');
+    const cartPanel = document.getElementById('cartPanel');
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartCountEl = document.getElementById('cartCount');
+    const cartTotalEl = document.getElementById('cartTotal');
+    const cart = [];
+
+    function formatPrice(value) {
+        return '$' + value.toFixed(2);
+    }
+
+    function updateCart() {
+        cartCountEl.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+        cartTotalEl.textContent = formatPrice(cart.reduce((sum, item) => sum + item.price * item.qty, 0));
+
+        if (!cart.length) {
+            cartItemsEl.innerHTML = '<div class="cart-item">Your cart is empty.</div>';
+            return;
+        }
+
+        cartItemsEl.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <span>${item.name} × ${item.qty}</span>
+                <strong>${formatPrice(item.price * item.qty)}</strong>
+            </div>
+        `).join('');
+    }
+
+    function addItemToCart(name, price) {
+        const existing = cart.find(item => item.name === name);
+        if (existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({ name, price, qty: 1 });
+        }
+        updateCart();
+        cartPanel.classList.remove('hide');
+    }
+
+    document.querySelectorAll('.product-card').forEach(card => {
+        const button = card.querySelector('.product-footer button');
+        if (!button) return;
+        button.addEventListener('click', () => {
+            const name = card.querySelector('h3').textContent.trim();
+            const price = Number(card.querySelector('.price').textContent.replace('$', '').trim());
+            addItemToCart(name, price);
+        });
+    });
+
+    cartToggleButton.addEventListener('click', () => {
+        cartPanel.classList.toggle('hide');
+    });
+
+    updateCart();
 
     // ---- Contact form validation (feature: validated fields + input-aware feedback) ----
     const form = document.getElementById('contactForm');
