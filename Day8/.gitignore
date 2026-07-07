@@ -1,0 +1,9 @@
+## Runtime data — never commit real student data or uploaded photos
+/data/registrations.json
+/uploads/*
+!/uploads/.gitkeep
+
+## OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
