@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shared helpers for the Student Registration System.
  * Used by index.php, confirm.php, and the admin panel.
@@ -7,6 +8,11 @@
 define('DATA_DIR', __DIR__ . '/../data');
 define('DATA_FILE', DATA_DIR . '/registrations.json');
 define('UPLOADS_DIR', __DIR__ . '/../uploads');
+define('DB_HOST', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_NAME', 'college_form');
+define('DB_TABLE', 'data');
 
 /**
  * Escape a value for safe HTML output.
@@ -45,6 +51,62 @@ function ensure_storage_ready()
 }
 
 /**
+ * Create a MySQL connection for the college form submissions.
+ */
+function get_db_connection()
+{
+    static $connection = null;
+
+    if ($connection instanceof mysqli) {
+        return $connection;
+    }
+
+    $connection = @new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+    if ($connection->connect_error) {
+        error_log('Database connection failed: ' . $connection->connect_error);
+        return null;
+    }
+
+    $connection->set_charset('utf8mb4');
+    return $connection;
+}
+
+/**
+ * Ensure the database and table exist before inserting data.
+ */
+function ensure_database_ready()
+{
+    $connection = @new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD);
+    if ($connection->connect_error) {
+        error_log('Database server connection failed: ' . $connection->connect_error);
+        return false;
+    }
+
+    $connection->query('CREATE DATABASE IF NOT EXISTS `' . DB_NAME . '`');
+
+    if (!$connection->select_db(DB_NAME)) {
+        $connection->close();
+        return false;
+    }
+
+    $sql = 'CREATE TABLE IF NOT EXISTS `' . DB_TABLE . '` (
+        `id` VARCHAR(50) PRIMARY KEY,
+        `full_name` VARCHAR(255) NOT NULL,
+        `email` VARCHAR(255) NOT NULL,
+        `mobile` VARCHAR(30) NOT NULL,
+        `gender` VARCHAR(20) NOT NULL,
+        `course` VARCHAR(100) NOT NULL,
+        `address` TEXT NOT NULL,
+        `photo` VARCHAR(255) DEFAULT NULL,
+        `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4';
+
+    $connection->query($sql);
+    $connection->close();
+    return true;
+}
+
+/**
  * Read all registrations from the JSON store.
  */
 function read_registrations()
@@ -58,11 +120,44 @@ function read_registrations()
 }
 
 /**
- * Append one registration record using an exclusive file lock
- * so concurrent submissions never clobber each other.
+ * Append one registration record to MySQL first and fall back to JSON if needed.
  */
 function save_registration(array $record)
 {
+    $record['id'] = uniqid('reg_', true);
+    $record['created_at'] = date('Y-m-d H:i:s');
+
+    if (ensure_database_ready()) {
+        $connection = get_db_connection();
+        if ($connection) {
+            $stmt = $connection->prepare(
+                'INSERT INTO `' . DB_TABLE . '` (`id`, `full_name`, `email`, `mobile`, `gender`, `course`, `address`, `photo`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            );
+
+            if ($stmt) {
+                $stmt->bind_param(
+                    'sssssssss',
+                    $record['id'],
+                    $record['full_name'],
+                    $record['email'],
+                    $record['mobile'],
+                    $record['gender'],
+                    $record['course'],
+                    $record['address'],
+                    $record['photo'],
+                    $record['created_at']
+                );
+
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    return $record;
+                }
+
+                $stmt->close();
+            }
+        }
+    }
+
     if (!ensure_storage_ready()) {
         return false;
     }
@@ -84,8 +179,6 @@ function save_registration(array $record)
         $records = [];
     }
 
-    $record['id'] = uniqid('reg_', true);
-    $record['created_at'] = date('c');
     $records[] = $record;
 
     ftruncate($handle, 0);
