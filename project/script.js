@@ -64,28 +64,47 @@ form.addEventListener("submit", async function (e) {
         const res = await fetch("register.php", { method: "POST", body: data });
         const result = await res.json();
 
-        msg.textContent = result.message;
-        msg.classList.add(result.success ? "ok" : "err");
-
-        if (result.success) {
-            form.reset();
+     if (result.success) {
             const eventId = data.get("event_id");
+            
+            // Show success message with link to pass.php
+            if (result.reg_id) {
+                msg.innerHTML = `
+                    Registered successfully!<br><br>
+                    <a href="pass.php?id=${result.reg_id}" target="_blank" class="download-pass-btn">
+                        🎫 View / Download Your Pass (REG #${result.reg_id} / EV #${eventId})
+                    </a>
+                `;
+            } else {
+                msg.textContent = result.message;
+            }
+            
+            msg.classList.add("ok");
+            form.reset();
 
-            // Update the small summary card gauge text
+            // Update remaining seat UI elements ON SUCCESS ONLY
             const remainingEl = document.querySelector(`.event-card[data-id="${eventId}"] .left`);
             if (remainingEl) remainingEl.textContent = result.remaining + " left";
 
-            // Update the detailed card's available-count
             const detailedEl = document.querySelector(`.available-count[data-id="${eventId}"]`);
             if (detailedEl) detailedEl.textContent = result.remaining > 0 ? result.remaining : "Full";
 
-            // Update Celebrity Night's seats-available span, if this was that event
             const celebEl = document.querySelector(`.seats-available[data-id="${eventId}"]`);
             if (celebEl) celebEl.textContent = result.remaining > 0 ? result.remaining + " Remaining" : "Full";
+
+        } else {
+            // Simple error handling - no duplicate UI seat updates needed here
+            msg.textContent = result.message;
+            msg.classList.add("err");
         }
+        
     } catch (err) {
         msg.textContent = "Something went wrong. Try again.";
         msg.classList.add("err");
+        setTimeout(() => {
+            btn.disabled = false;
+        }, 2000);
+        return;
     }
 
     btn.disabled = false;

@@ -33,12 +33,22 @@ try {
     $stmt->bind_param("ssssi", $name, $college_id, $branch, $phone, $event_id);
     $stmt->execute();
 
+    // Get the newly inserted registration ID
+    $reg_id = $conn->insert_id;
+
     $conn->query("UPDATE event SET booked_seat = booked_seat + 1 WHERE id = $event_id");
 
     $conn->commit();
 
     $remaining = $event['total_seat'] - ($event['booked_seat'] + 1);
-    echo json_encode(["success" => true, "message" => "Registered successfully!", "remaining" => $remaining]);
+
+    // Return reg_id in response
+    echo json_encode([
+        "success" => true,
+        "message" => "Registered successfully!",
+        "remaining" => $remaining,
+        "reg_id" => $reg_id
+    ]);
 } catch (Exception $e) {
     $conn->rollback();
     echo json_encode(["success" => false, "message" => $e->getMessage()]);

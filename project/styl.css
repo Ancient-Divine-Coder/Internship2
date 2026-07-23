@@ -157,3 +157,20 @@ h2.section-title { font-family:'Space Grotesk',sans-serif; font-size:22px; margi
   .celebrity-content { padding:24px; }
   .events-grid { grid-template-columns:1fr; }
 }
+/* Download Pass Link in Form Message */
+.download-pass-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, var(--cyan), var(--amber));
+    color: #0b0e27;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    transition: transform 0.2s ease;
+}
+
+.download-pass-btn:hover {
+    transform: scale(1.05);
+}
